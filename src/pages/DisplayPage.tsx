@@ -10,7 +10,7 @@ function DisplayPage() {
 
   useEffect(() => {
     console.log(process.env.REACT_APP_API_URL);
-    axios.get(`${process.env.REACT_APP_API_URL}/entries/getentries`)
+    axios.get("https://tuf-showcodesnippets.onrender.com/api/entries/getentries")
       .then(response => {
         setEntries(response.data);
       })
@@ -18,8 +18,6 @@ function DisplayPage() {
         console.error('There was an error!', error);
       });
   }, []);
-
-  
 
   const handleOpen = (code: any) => {
     setSelectedCode(code);
