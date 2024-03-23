@@ -3,7 +3,6 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import axios from 'axios';
 
-
 export default function SubmissionForm() {
     const [formData, setFormData] = useState({
         username: '',
@@ -23,7 +22,7 @@ export default function SubmissionForm() {
         };
       
         try {
-            const response = await axios.post("https://tuf-showcodesnippets.onrender.com/api/submit/submitcode", formDataForAPI);
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/submit/submitcode`, formDataForAPI);
       
           // Handle response here
           const data = response.data;
