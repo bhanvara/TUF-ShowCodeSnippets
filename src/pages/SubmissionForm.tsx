@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import axios from 'axios';
+
 
 export default function SubmissionForm() {
     const [formData, setFormData] = useState({
@@ -10,11 +12,27 @@ export default function SubmissionForm() {
         sourceCode: '',
     });
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Handle the submission logic here
+      
+        const formDataForAPI = {
+          "username": formData.username,
+          "code_language": formData.preferredCodeLanguage,
+          "stdin": formData.stdin,
+          "source_code": formData.sourceCode,
+        };
+      
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/submit/submitcode`, formDataForAPI);
+      
+          // Handle response here
+          const data = response.data;
+          console.log(data);
+        } catch (error) {
+          console.error('Error:', error);
+        }
         console.log(formData);
-    };
+      };
 
     const handleChange = (e: any) => {
         const { name, value } = e.target;

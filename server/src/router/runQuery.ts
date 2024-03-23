@@ -3,7 +3,7 @@ import { pool } from '../config/dbconfig';
 
 const router = express.Router();
 
-router.get('/runQuery', async (req, res) => {
+router.get('/', async (req, res) => {
     
     const query = req.body;
     try {
