@@ -4,7 +4,7 @@ import submitRoutes from './router/submitRoutes';
 import entryRoutes from './router/entryRoutes';
 import { run } from 'node:test';
 import runQuery from './router/runQuery';
-const bodyParser = require('body-parser');
+import bodyParser from 'body-parser';
 
 const app = express();
 app.use(cors()); // add this line to enable all CORS requests

@@ -3,7 +3,7 @@ import { pool } from '../config/dbconfig';
 
 const router = express.Router();
 
-router.get('/getEntries', async (req, res) => {
+router.get('/getEntries', async (req: express.Request, res: express.Response) => {
   try {
     const [rows, fields] = await pool.query('SELECT * FROM submissions');
     res.json(rows);
