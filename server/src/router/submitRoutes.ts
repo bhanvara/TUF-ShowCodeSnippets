@@ -3,7 +3,7 @@ import { pool } from '../config/dbconfig';
 
 const router = express.Router();
 
-router.post('/submitCode', async (req, res) => {
+router.post('/submitCode', async (req: express.Request, res: express.Response) => {
   const { username, code_language, stdin, source_code } = req.body;
   try {
     const [rows, fields] = await pool.query(
