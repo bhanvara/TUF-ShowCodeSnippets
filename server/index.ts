@@ -1,9 +1,9 @@
 import app from './src/app'; 
 import { PORT } from './src/config/config';
-
+import { Request, Response } from 'express';
 const port = PORT;
 
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res: Response) => {
   res.send('Backend for takeUforward!');
 });
 
