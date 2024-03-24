@@ -2,13 +2,85 @@ import express from 'express';
 import { pool } from '../config/dbconfig';
 
 const router = express.Router();
+const axios = require('axios');
+
+// const axios = require('axios');
+
+// const options = {
+//   method: 'POST',
+//   url: 'https://judge0-ce.p.rapidapi.com/submissions',
+//   params: {
+//     base64_encoded: 'true',
+//     fields: '*'
+//   },
+//   headers: {
+//     'content-type': 'application/json',
+//     'Content-Type': 'application/json',
+//     'X-RapidAPI-Key': 'd5b5b1aa29msh35d97b403cd445dp174355jsn601c303a0cce',
+//     'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
+//   },
+//   data: {
+//     language_id: 52,
+//     source_code: 'I2luY2x1ZGUgPHN0ZGlvLmg+CgppbnQgbWFpbih2b2lkKSB7CiAgY2hhciBuYW1lWzEwXTsKICBzY2FuZigiJXMiLCBuYW1lKTsKICBwcmludGYoImhlbGxvLCAlc1xuIiwgbmFtZSk7CiAgcmV0dXJuIDA7Cn0=',
+//     stdin: 'SnVkZ2Uw'
+//   }
+// };
+
+// try {
+// 	const response = await axios.request(options);
+// 	console.log(response.data);
+// } catch (error) {
+// 	console.error(error);
+// }
+
+async function makeSubmission(code_language: string, source_code: string, stdin: string) {
+
+  let language_id: number = 0;
+  if (code_language === 'C++') {
+    language_id = 54;
+  } else if (code_language === 'JavaScript') {
+    language_id = 93;
+  } else if (code_language === 'Java') {
+    language_id = 62;
+  } else if (code_language === 'Python') {
+    language_id = 71;
+  }
+  const options = {
+    method: 'POST',
+    url: 'https://judge0-ce.p.rapidapi.com/submissions',
+    params: {
+      base64_encoded: 'false',
+      fields: '*'
+    },
+    headers: {
+      'content-type': 'application/json',
+      'Content-Type': 'application/json',
+      'X-RapidAPI-Key': 'd5b5b1aa29msh35d97b403cd445dp174355jsn601c303a0cce',
+      'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
+    },
+    data: {
+      language_id: language_id,
+      source_code: source_code,
+      stdin: stdin
+    }
+  };
+
+  try {
+    const response = await axios.request(options);
+    console.log(response.data);
+    return response.data.token;
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 router.post('/submitCode', async (req: express.Request, res: express.Response) => {
-  const { username, code_language, stdin, source_code } = req.body;
+  const { username, code_language, stdin, source_code, submission_time } = req.body;
+  const submissionToken = await makeSubmission(code_language, source_code, stdin);
   try {
     const [rows, fields] = await pool.query(
-      'INSERT INTO submissions (username, code_language, stdin, source_code) VALUES (?,?,?,?)',
-      [username, code_language, stdin, source_code]
+      'INSERT INTO submissions (username, code_language, stdin, source_code, submissionToken, submission_time) VALUES (?,?,?,?,?,?)',
+      [username, code_language, stdin, source_code, submissionToken, submission_time]
     );
     res.json({ message: 'Submission successful' });
   } catch (error) {
@@ -23,6 +95,7 @@ router.post('/submitCode', async (req: express.Request, res: express.Response) =
 //   code_language VARCHAR(255) NOT NULL,
 //   stdin TEXT,
 //   source_code TEXT NOT NULL,
+//   submissionToken TEXT,
 //   submission_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 // );
 

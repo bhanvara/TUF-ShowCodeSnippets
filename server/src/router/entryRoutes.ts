@@ -19,7 +19,9 @@ router.get('/getEntries', async (req: express.Request, res: express.Response) =>
 //   code_language VARCHAR(255) NOT NULL,
 //   stdin TEXT,
 //   source_code TEXT NOT NULL,
+//   output TEXT,
 //   submission_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 // );
+
 
 export default router;

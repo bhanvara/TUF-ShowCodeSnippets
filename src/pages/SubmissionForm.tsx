@@ -19,6 +19,7 @@ export default function SubmissionForm() {
           "code_language": formData.preferredCodeLanguage,
           "stdin": formData.stdin,
           "source_code": formData.sourceCode,
+          "submission_time": new Date().toISOString(),
         };
       
         try {

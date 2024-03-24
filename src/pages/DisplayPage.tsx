@@ -3,10 +3,37 @@ import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
+
 function DisplayPage() {
   const [entries, setEntries] = useState([]);
   const [open, setOpen] = useState(false);
   const [selectedCode, setSelectedCode] = useState('');
+  const [outputs, setOutputs] = useState({});
+
+  async function getOutput(submissionToken: string) {
+    const options = {
+      method: 'GET',
+      url: `https://judge0-ce.p.rapidapi.com/submissions/${submissionToken}`,
+      params: {
+        base64_encoded: 'false',
+        fields: '*'
+      },
+      headers: {
+        'X-RapidAPI-Key': 'd5b5b1aa29msh35d97b403cd445dp174355jsn601c303a0cce',
+        'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
+      }
+    };
+    console.log(submissionToken);
+    try {
+      const response = await axios.request(options);
+      setOutputs(prevOutputs => ({ ...prevOutputs, [submissionToken]: response.data.stdout }));
+      console.log(response.data.stdout);
+    } catch (error) {
+      console.error(error);
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
 
   useEffect(() => {
     console.log(process.env.REACT_APP_API_URL);
@@ -14,6 +41,7 @@ function DisplayPage() {
       .then(response => {
         if (Array.isArray(response.data)) {
           setEntries(response.data as never[]);
+          response.data.forEach(entry => getOutput(entry.submissionToken));
         } else {
           console.error('API response is not an array');
         }
@@ -45,22 +73,25 @@ function DisplayPage() {
               <th className="px-4 py-2">Stdin</th>
               <th className="px-4 py-2">Submission Time</th>
               <th className="px-4 py-2">Source Code</th>
+              <th className="px-4 py-2">Output</th>
             </tr>
           </thead>
           <tbody>
-            {Array.isArray(entries) && entries.map((entry: { id: string, username: string, code_language: string, stdin: string, submission_time: string, source_code: string }, index: number) => (
-                <tr key={entry.id} className={index % 2 === 0 ? 'bg-gray-200' : ''}>
-                    <td className="border px-4 py-2">{entry.id}</td>
-                    <td className="border px-4 py-2">{entry.username}</td>
-                    <td className="border px-4 py-2">{entry.code_language}</td>
-                    <td className="border px-4 py-2">{entry.stdin}</td>
-                    <td className="border px-4 py-2">{new Date(entry.submission_time).toLocaleString()}</td>
-                    <td className="border px-4 py-2">
-                        <button onClick={() => handleOpen(entry.source_code)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Show Code
-                        </button>
-                    </td>
-                </tr>
+            {Array.isArray(entries) && entries.map((entry: { id: string, username: string, code_language: string, stdin: string, submission_time: string, source_code: string, submissionToken: string }, index: number) => (
+              <tr key={entry.id} className={index % 2 === 0 ? 'bg-gray-200' : ''}>
+                <td className="border px-4 py-2">{entry.id}</td>
+                <td className="border px-4 py-2">{entry.username}</td>
+                <td className="border px-4 py-2">{entry.code_language}</td>
+                <td className="border px-4 py-2">{entry.stdin}</td>
+                <td className="border px-4 py-2">{new Date(entry.submission_time).toLocaleString()}</td>
+                <td className="border px-4 py-2 flex justify-between">
+                  <span>{entry.source_code.substring(0, 100)}</span>
+                  <button onClick={() => handleOpen(entry.source_code)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2">
+                    Show Full Code
+                  </button>
+                </td>
+                <td className="border px-4 py-2">{String(outputs[entry.submissionToken as keyof typeof outputs])}</td>
+              </tr>
             ))}
           </tbody>
         </table>
