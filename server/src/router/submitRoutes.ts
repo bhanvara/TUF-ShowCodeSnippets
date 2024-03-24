@@ -2,6 +2,7 @@ import express from 'express';
 import { pool } from '../config/dbconfig';
 import dotenv from 'dotenv';
 dotenv.config();
+console.log(process.env.X_RAPIDAPI_KEY);
 
 const router = express.Router();
 import axios from 'axios';
@@ -40,7 +41,8 @@ async function makeSubmission(code_language: string, source_code: string, stdin:
 
   try {
     const response = await axios.request(options);
-    console.log(response);
+    console.log('Response Status:', response.status);
+    console.log('Response Data:', response.data);
     return response.data.token;
   } catch (error) {
     console.error(error);
