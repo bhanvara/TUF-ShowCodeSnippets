@@ -10,7 +10,7 @@ function DisplayPage() {
   const [selectedCode, setSelectedCode] = useState('');
   const [outputs, setOutputs] = useState({});
 
-  async function getOutput(submissionToken: string) {
+  async function getOutputs(submissionToken: string) {
     const options = {
       method: 'GET',
       url: `https://judge0-ce.p.rapidapi.com/submissions/${submissionToken}`,
@@ -25,6 +25,7 @@ function DisplayPage() {
     };
     try {
       const response = await axios.request(options);
+      console.log(process.env.REACT_APP_X_RAPIDAPI_KEY);
       setOutputs(prevOutputs => ({ ...prevOutputs, [submissionToken]: response.data.stdout }));
     } catch (error) {
       console.error(error);
@@ -39,7 +40,7 @@ function DisplayPage() {
       .then(response => {
         if (Array.isArray(response.data)) {
           setEntries(response.data as never[]);
-          response.data.forEach(entry => getOutput(entry.submissionToken));
+          response.data.forEach(entry => getOutputs(entry.submissionToken));
         } else {
           console.error('API response is not an array');
         }
