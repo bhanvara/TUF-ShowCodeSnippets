@@ -1,37 +1,10 @@
 import express from 'express';
 import { pool } from '../config/dbconfig';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const router = express.Router();
 import axios from 'axios';
-
-// const axios = require('axios');
-
-// const options = {
-//   method: 'POST',
-//   url: 'https://judge0-ce.p.rapidapi.com/submissions',
-//   params: {
-//     base64_encoded: 'true',
-//     fields: '*'
-//   },
-//   headers: {
-//     'content-type': 'application/json',
-//     'Content-Type': 'application/json',
-//     'X-RapidAPI-Key': 'd5b5b1aa29msh35d97b403cd445dp174355jsn601c303a0cce',
-//     'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
-//   },
-//   data: {
-//     language_id: 52,
-//     source_code: 'I2luY2x1ZGUgPHN0ZGlvLmg+CgppbnQgbWFpbih2b2lkKSB7CiAgY2hhciBuYW1lWzEwXTsKICBzY2FuZigiJXMiLCBuYW1lKTsKICBwcmludGYoImhlbGxvLCAlc1xuIiwgbmFtZSk7CiAgcmV0dXJuIDA7Cn0=',
-//     stdin: 'SnVkZ2Uw'
-//   }
-// };
-
-// try {
-// 	const response = await axios.request(options);
-// 	console.log(response.data);
-// } catch (error) {
-// 	console.error(error);
-// }
 
 async function makeSubmission(code_language: string, source_code: string, stdin: string) {
 
@@ -55,7 +28,7 @@ async function makeSubmission(code_language: string, source_code: string, stdin:
     headers: {
       'content-type': 'application/json',
       'Content-Type': 'application/json',
-      'X-RapidAPI-Key': 'd5b5b1aa29msh35d97b403cd445dp174355jsn601c303a0cce',
+      'X-RapidAPI-Key': process.env.X_RAPIDAPI_KEY,
       'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
     },
     data: {
@@ -67,7 +40,6 @@ async function makeSubmission(code_language: string, source_code: string, stdin:
 
   try {
     const response = await axios.request(options);
-    console.log(response.data);
     return response.data.token;
   } catch (error) {
     console.error(error);

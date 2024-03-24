@@ -19,15 +19,13 @@ function DisplayPage() {
         fields: '*'
       },
       headers: {
-        'X-RapidAPI-Key': 'd5b5b1aa29msh35d97b403cd445dp174355jsn601c303a0cce',
+        'X-RapidAPI-Key': process.env.REACT_APP_X_RAPIDAPI_KEY,
         'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
       }
     };
-    console.log(submissionToken);
     try {
       const response = await axios.request(options);
       setOutputs(prevOutputs => ({ ...prevOutputs, [submissionToken]: response.data.stdout }));
-      console.log(response.data.stdout);
     } catch (error) {
       console.error(error);
     }
