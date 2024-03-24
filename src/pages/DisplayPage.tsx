@@ -25,7 +25,6 @@ function DisplayPage() {
     };
     try {
       const response = await axios.request(options);
-      console.log(process.env.REACT_APP_X_RAPIDAPI_KEY);
       setOutputs(prevOutputs => ({ ...prevOutputs, [submissionToken]: response.data.stdout }));
     } catch (error) {
       console.error(error);
