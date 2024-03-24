@@ -9,8 +9,8 @@ function DisplayPage() {
   const [selectedCode, setSelectedCode] = useState('');
 
   useEffect(() => {
-    console.log(process.env.REACT_APP_API_URL);
-    axios.get(`${process.env.REACT_APP_API_URL}/entries/getentries`)
+    console.log(process.env.API_URL);
+    axios.get(`${process.env.API_URL}/entries/getentries`)
       .then(response => {
         setEntries(response.data);
       })

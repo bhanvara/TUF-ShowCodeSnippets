@@ -22,7 +22,7 @@ export default function SubmissionForm() {
         };
       
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/submit/submitcode`, formDataForAPI);
+            const response = await axios.post(`${process.env.API_URL}/submit/submitcode`, formDataForAPI);
       
           // Handle response here
           const data = response.data;
