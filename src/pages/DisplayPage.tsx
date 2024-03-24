@@ -9,17 +9,19 @@ function DisplayPage() {
   const [selectedCode, setSelectedCode] = useState('');
 
   useEffect(() => {
-    console.log(process.env.API_URL);
-    axios.get(`${process.env.API_URL}/entries/getentries`)
+    console.log(process.env.REACT_APP_API_URL);
+    axios.get(`${process.env.REACT_APP_API_URL}/entries/getentries`)
       .then(response => {
-        setEntries(response.data);
+        if (Array.isArray(response.data)) {
+          setEntries(response.data as never[]);
+        } else {
+          console.error('API response is not an array');
+        }
       })
       .catch(error => {
         console.error('There was an error!', error);
       });
   }, []);
-
-  
 
   const handleOpen = (code: any) => {
     setSelectedCode(code);
@@ -46,7 +48,7 @@ function DisplayPage() {
             </tr>
           </thead>
           <tbody>
-            {entries.map((entry: { id: string, username: string, code_language: string, stdin: string, submission_time: string, source_code: string }, index: number) => (
+            {Array.isArray(entries) && entries.map((entry: { id: string, username: string, code_language: string, stdin: string, submission_time: string, source_code: string }, index: number) => (
                 <tr key={entry.id} className={index % 2 === 0 ? 'bg-gray-200' : ''}>
                     <td className="border px-4 py-2">{entry.id}</td>
                     <td className="border px-4 py-2">{entry.username}</td>
