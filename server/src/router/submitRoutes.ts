@@ -40,7 +40,7 @@ async function makeSubmission(code_language: string, source_code: string, stdin:
 
   try {
     const response = await axios.request(options);
-    console.log(process.env.X_RAPIDAPI_KEY);
+    console.log(response);
     return response.data.token;
   } catch (error) {
     console.error(error);
