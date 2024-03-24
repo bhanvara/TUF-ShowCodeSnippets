@@ -29,7 +29,7 @@ async function makeSubmission(code_language: string, source_code: string, stdin:
     headers: {
       'content-type': 'application/json',
       'Content-Type': 'application/json',
-      'X-RapidAPI-Key': process.env.X_RAPIDAPI_KEY,
+      'X-RapidAPI-Key': 'd5b5b1aa29msh35d97b403cd445dp174355jsn601c303a0cce',
       'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
     },
     data: {
@@ -41,28 +41,9 @@ async function makeSubmission(code_language: string, source_code: string, stdin:
 
   try {
     const response = await axios.request(options);
-    let token = response.data.token;
-
-    // Poll the API until the submission is processed
-    let result = null;
-    while (true) {
-      const getResult = await axios.get(`https://judge0-ce.p.rapidapi.com/submissions/${token}`, {
-        headers: {
-          'X-RapidAPI-Key': process.env.X_RAPIDAPI_KEY,
-          'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
-        }
-      });
-
-      if (getResult.data.status.id !== 1) { // 1 is the status ID for 'Processing'
-        result = getResult.data.token;
-        break;
-      }
-
-      // Wait for a second before polling again to avoid hitting rate limits
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    }
-
-    return result;
+    console.log('Response Status:', response.status);
+    console.log('Response Data:', response.data);
+    return response.data.token;
   } catch (error) {
     console.error(error);
   }
