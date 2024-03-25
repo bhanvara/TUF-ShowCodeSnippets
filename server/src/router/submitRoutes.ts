@@ -9,6 +9,7 @@ import axios from 'axios';
 
 async function makeSubmission(code_language: string, source_code: string, stdin: string) {
 
+  code_language = Buffer.from(code_language, 'base64').toString();
   let language_id: number = 0;
   if (code_language === 'C++') {
     language_id = 54;
@@ -32,19 +33,19 @@ async function makeSubmission(code_language: string, source_code: string, stdin:
       'X-RapidAPI-Key': process.env.X_RAPIDAPI_KEY,
       'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
     },
-    // send base64_encoded message
-    // data: {
-    //   language_id: language_id, 
-    //   source_code: source_code,
-    //   stdin: stdin
-    // }
+
+    data: {
+      language_id: language_id, 
+      source_code: source_code,
+      stdin: stdin
+    }
 
     // send base64_encoded message
-    data: {
-      language_id: language_id,
-      source_code: Buffer.from(source_code).toString('base64'),
-      stdin: Buffer.from(stdin).toString('base64')
-    }
+    // data: {
+    //   language_id: language_id,
+    //   source_code: Buffer.from(source_code).toString('base64'),
+    //   stdin: Buffer.from(stdin).toString('base64')
+    // }
   };
 
   console.log('Making submission with options:', options)
@@ -61,8 +62,13 @@ async function makeSubmission(code_language: string, source_code: string, stdin:
 }
 
 router.post('/submitCode', async (req: express.Request, res: express.Response) => {
-  const { username, code_language, stdin, source_code } = req.body;
+  let { username, code_language, stdin, source_code } = req.body;
   const submissionToken = await makeSubmission(code_language, source_code, stdin);
+
+  // convert code_language, stdin, source_code from base64 to string
+  code_language = Buffer.from(code_language, 'base64').toString();
+  stdin = Buffer.from(stdin, 'base64').toString();
+  source_code = Buffer.from(source_code, 'base64').toString();
 
   if (!submissionToken) {
     res.status(500).send('Error generating submission token');

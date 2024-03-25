@@ -13,25 +13,32 @@ export default function SubmissionForm() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-      
+
+        // const formDataForAPI = {
+        //   "username": formData.username,
+        //   "code_language": formData.preferredCodeLanguage,
+        //   "stdin": formData.stdin,
+        //   "source_code": formData.sourceCode 
+        // };
+
         const formDataForAPI = {
-          "username": formData.username,
-          "code_language": formData.preferredCodeLanguage,
-          "stdin": formData.stdin,
-          "source_code": formData.sourceCode
+            "username": formData.username,
+            "code_language": btoa(formData.preferredCodeLanguage),
+            "stdin": btoa(formData.stdin),
+            "source_code": btoa(formData.sourceCode)
         };
-      
+
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/submit/submitcode`, formDataForAPI);
-      
-          // Handle response here
-          const data = response.data;
-          console.log(data);
-          console.log(formDataForAPI);
+
+            // Handle response here
+            const data = response.data;
+            console.log(data);
+            console.log(formDataForAPI);
         } catch (error) {
-          console.error('Error:', error);
-        }  
-      };
+            console.error('Error:', error);
+        }
+    };
 
     const handleChange = (e: any) => {
         const { name, value } = e.target;
