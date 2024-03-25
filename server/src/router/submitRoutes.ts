@@ -28,8 +28,8 @@ async function makeSubmission(code_language: string, source_code: string, stdin:
       fields: '*'
     },
     headers: {
-      // 'content-type': 'application/json',
-      // 'Content-Type': 'application/json',
+      'content-type': 'application/json',
+      'Content-Type': 'application/json',
       'X-RapidAPI-Key': process.env.X_RAPIDAPI_KEY,
       'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
     },
