@@ -27,11 +27,10 @@ export default function SubmissionForm() {
           // Handle response here
           const data = response.data;
           console.log(data);
-          console.log(formData);
+          console.log(formDataForAPI);
         } catch (error) {
           console.error('Error:', error);
-        }
-        
+        }  
       };
 
     const handleChange = (e: any) => {

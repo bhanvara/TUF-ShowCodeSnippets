@@ -53,9 +53,15 @@ async function makeSubmission(code_language: string, source_code: string, stdin:
 router.post('/submitCode', async (req: express.Request, res: express.Response) => {
   const { username, code_language, stdin, source_code} = req.body;
   const submissionToken = await makeSubmission(code_language, source_code, stdin);
+  
+  if (!submissionToken) {
+    res.status(500).send('Error generating submission token');
+    return;
+  }
+
   try {
     const [rows, fields] = await pool.query(
-      'INSERT INTO submissions (username, code_language, stdin, source_code, submissionToken) VALUES (?,?,?,?,?,?)',
+      'INSERT INTO submissions (username, code_language, stdin, source_code, submissionToken) VALUES (?,?,?,?,?)',
       [username, code_language, stdin, source_code, submissionToken]
     );
     res.json({ message: 'Submission successful' });
