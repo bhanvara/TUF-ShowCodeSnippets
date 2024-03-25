@@ -23,7 +23,7 @@ async function makeSubmission(code_language: string, source_code: string, stdin:
     method: 'POST',
     url: 'https://judge0-ce.p.rapidapi.com/submissions',
     params: {
-      base64_encoded: 'false',
+      base64_encoded: 'true',
       fields: '*'
     },
     headers: {
@@ -32,12 +32,22 @@ async function makeSubmission(code_language: string, source_code: string, stdin:
       'X-RapidAPI-Key': process.env.X_RAPIDAPI_KEY,
       'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
     },
+    // send base64_encoded message
+    // data: {
+    //   language_id: language_id, 
+    //   source_code: source_code,
+    //   stdin: stdin
+    // }
+
+    // send base64_encoded message
     data: {
       language_id: language_id,
-      source_code: source_code,
-      stdin: stdin
+      source_code: Buffer.from(source_code).toString('base64'),
+      stdin: Buffer.from(stdin).toString('base64')
     }
   };
+
+  console.log('Making submission with options:', options)
 
   try {
     const response = await axios.request(options);
@@ -51,9 +61,9 @@ async function makeSubmission(code_language: string, source_code: string, stdin:
 }
 
 router.post('/submitCode', async (req: express.Request, res: express.Response) => {
-  const { username, code_language, stdin, source_code} = req.body;
+  const { username, code_language, stdin, source_code } = req.body;
   const submissionToken = await makeSubmission(code_language, source_code, stdin);
-  
+
   if (!submissionToken) {
     res.status(500).send('Error generating submission token');
     return;
