@@ -27,7 +27,7 @@ async function makeSubmission(code_language: string, source_code: string, stdin:
       fields: '*'
     },
     headers: {
-      'content-type': 'application/json',
+      // 'content-type': 'application/json',
       'Content-Type': 'application/json',
       'X-RapidAPI-Key': process.env.X_RAPIDAPI_KEY,
       'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
@@ -46,16 +46,17 @@ async function makeSubmission(code_language: string, source_code: string, stdin:
     return response.data.token;
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
 router.post('/submitCode', async (req: express.Request, res: express.Response) => {
-  const { username, code_language, stdin, source_code, submission_time } = req.body;
+  const { username, code_language, stdin, source_code} = req.body;
   const submissionToken = await makeSubmission(code_language, source_code, stdin);
   try {
     const [rows, fields] = await pool.query(
-      'INSERT INTO submissions (username, code_language, stdin, source_code, submissionToken, submission_time) VALUES (?,?,?,?,?,?)',
-      [username, code_language, stdin, source_code, submissionToken, submission_time]
+      'INSERT INTO submissions (username, code_language, stdin, source_code, submissionToken) VALUES (?,?,?,?,?,?)',
+      [username, code_language, stdin, source_code, submissionToken]
     );
     res.json({ message: 'Submission successful' });
   } catch (error) {
