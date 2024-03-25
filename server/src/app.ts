@@ -7,7 +7,13 @@ import runQuery from './router/runQuery';
 import bodyParser from 'body-parser';
 
 const app = express();
-app.use(cors()); // add this line to enable all CORS requests
+
+// app.use(cors()); // add this line to enable all CORS requests
+app.use(cors({
+    origin: 'https://tuf-show-code-snippets.vercel.app' // replace with your origin
+  }));
+
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
