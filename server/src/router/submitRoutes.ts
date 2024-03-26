@@ -2,7 +2,6 @@ import express from 'express';
 import { pool } from '../config/dbconfig';
 import dotenv from 'dotenv';
 dotenv.config();
-console.log("BackendUrl: ", process.env.REACT_APP_API_URL);
 
 const router = express.Router();
 import axios from 'axios';

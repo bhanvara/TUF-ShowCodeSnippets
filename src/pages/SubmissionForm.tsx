@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import axios from 'axios';
+console.log("BackendUrl: ", process.env.REACT_APP_API_URL);
 
 export default function SubmissionForm() {
     const [formData, setFormData] = useState({
@@ -20,7 +21,7 @@ export default function SubmissionForm() {
           "stdin": formData.stdin,
           "source_code": formData.sourceCode 
         };
-        
+
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/submit/submitcode`, formDataForAPI);
             console.log(response.data);
