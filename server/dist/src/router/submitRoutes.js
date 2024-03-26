@@ -16,12 +16,10 @@ const express_1 = __importDefault(require("express"));
 const dbconfig_1 = require("../config/dbconfig");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-console.log(process.env.X_RAPIDAPI_KEY);
 const router = express_1.default.Router();
 const axios_1 = __importDefault(require("axios"));
 function makeSubmission(code_language, source_code, stdin) {
     return __awaiter(this, void 0, void 0, function* () {
-        // code_language = Buffer.from(code_language, 'base64').toString();
         let language_id = 0;
         if (code_language === 'C++') {
             language_id = 54;
@@ -53,19 +51,11 @@ function makeSubmission(code_language, source_code, stdin) {
                 source_code: source_code,
                 stdin: stdin
             }
-            // send base64_encoded message
-            // data: {
-            //   language_id: language_id,
-            //   source_code: Buffer.from(source_code).toString('base64'),
-            //   stdin: Buffer.from(stdin).toString('base64')
-            // }
         };
-        console.log('Making submission with options:', options);
         try {
+            console.log('Making submission with options:', options);
             const response = yield axios_1.default.request(options);
-            console.log('Response Status:', response.status);
-            console.log('Response Data:', response.data);
-            return response.data.token;
+            return response;
         }
         catch (error) {
             console.error(error);
@@ -75,18 +65,15 @@ function makeSubmission(code_language, source_code, stdin) {
 }
 router.post('/submitCode', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { username, code_language, stdin, source_code } = req.body;
-    const submissionToken = yield makeSubmission(code_language, source_code, stdin);
-    // convert code_language, stdin, source_code from base64 to string
-    // code_language = Buffer.from(code_language, 'base64').toString();
-    // stdin = Buffer.from(stdin, 'base64').toString();
-    // source_code = Buffer.from(source_code, 'base64').toString();
-    if (!submissionToken) {
+    const response = yield makeSubmission(code_language, source_code, stdin);
+    if (!response) {
         res.status(500).send('Error generating submission token');
         return;
     }
+    const submissionToken = response.data.token;
     try {
         const [rows, fields] = yield dbconfig_1.pool.query('INSERT INTO submissions (username, code_language, stdin, source_code, submissionToken) VALUES (?,?,?,?,?)', [username, code_language, stdin, source_code, submissionToken]);
-        res.json({ message: 'Submission successful' });
+        res.status(response.status).json({ submissionToken, message: 'Submission successful', submitted: { username: username, code_language: code_language, stdin: stdin, source_code: source_code } });
     }
     catch (error) {
         console.error('Error submitting code:', error);
