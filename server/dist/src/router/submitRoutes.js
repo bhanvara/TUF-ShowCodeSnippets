@@ -21,7 +21,7 @@ const router = express_1.default.Router();
 const axios_1 = __importDefault(require("axios"));
 function makeSubmission(code_language, source_code, stdin) {
     return __awaiter(this, void 0, void 0, function* () {
-        code_language = Buffer.from(code_language, 'base64').toString();
+        // code_language = Buffer.from(code_language, 'base64').toString();
         let language_id = 0;
         if (code_language === 'C++') {
             language_id = 54;
@@ -39,7 +39,7 @@ function makeSubmission(code_language, source_code, stdin) {
             method: 'POST',
             url: 'https://judge0-ce.p.rapidapi.com/submissions',
             params: {
-                base64_encoded: 'true',
+                base64_encoded: 'false',
                 fields: '*'
             },
             headers: {
@@ -77,9 +77,9 @@ router.post('/submitCode', (req, res) => __awaiter(void 0, void 0, void 0, funct
     let { username, code_language, stdin, source_code } = req.body;
     const submissionToken = yield makeSubmission(code_language, source_code, stdin);
     // convert code_language, stdin, source_code from base64 to string
-    code_language = Buffer.from(code_language, 'base64').toString();
-    stdin = Buffer.from(stdin, 'base64').toString();
-    source_code = Buffer.from(source_code, 'base64').toString();
+    // code_language = Buffer.from(code_language, 'base64').toString();
+    // stdin = Buffer.from(stdin, 'base64').toString();
+    // source_code = Buffer.from(source_code, 'base64').toString();
     if (!submissionToken) {
         res.status(500).send('Error generating submission token');
         return;

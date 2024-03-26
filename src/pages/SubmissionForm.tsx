@@ -14,19 +14,20 @@ export default function SubmissionForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // const formDataForAPI = {
-        //   "username": formData.username,
-        //   "code_language": formData.preferredCodeLanguage,
-        //   "stdin": formData.stdin,
-        //   "source_code": formData.sourceCode 
-        // };
-
         const formDataForAPI = {
-            "username": formData.username,
-            "code_language": btoa(formData.preferredCodeLanguage),
-            "stdin": btoa(formData.stdin),
-            "source_code": btoa(formData.sourceCode)
+          "username": formData.username,
+          "code_language": formData.preferredCodeLanguage,
+          "stdin": formData.stdin,
+          "source_code": formData.sourceCode 
         };
+
+        // Data converted to base64
+        // const formDataForAPI = {
+        //     "username": formData.username,
+        //     "code_language": btoa(formData.preferredCodeLanguage),
+        //     "stdin": btoa(formData.stdin),
+        //     "source_code": btoa(formData.sourceCode)
+        // };
 
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/submit/submitcode`, formDataForAPI);
