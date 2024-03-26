@@ -54,7 +54,7 @@ router.post('/submitCode', async (req: express.Request, res: express.Response) =
   let { username, code_language, stdin, source_code } = req.body;
   const response = await makeSubmission(code_language, source_code, stdin);
 
-  const client = await createClient({ url: 'rediss://red-co1bf6uct0pc73fm28jg:O1E9TQCAcvx1lJH4s01zAk1MaiapQmcZ@oregon-redis.render.com:6379' })
+  const client = await createClient({ url: process.env.REDIS_URL })
   .on('error', (err) => {
     console.error('Redis client error:', err);
   }).connect();
