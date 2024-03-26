@@ -1,46 +1,62 @@
-# Getting Started with Create React App
+# Code Snippets Submission and Display
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a web application that facilitates the submission and display of code snippets. It is built using Express for the backend and React for the frontend.
 
-## Available Scripts
+## Tech Stack
+- Backend: Express
+- Frontend: React (or Next.js or any other similar framework)
+- Database: MySQL (hosted on Amazon RDS)
+- Caching: Redis
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+The application consists of two main pages:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+1. **Submission Form**: A form that gathers the following fields: username, preferred code language (C++, Java, JavaScript, Python), standard input (stdin), and the source code.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+2. **Display Page**: A page that presents all submitted entries in a tabular format, showcasing the username, code language, stdin, and the timestamp of submission. The source code is limited to the initial 100 characters for display.
 
-### `npm test`
+The application is designed to work seamlessly with data stored in MySQL tables and uses Redis for caching to reduce the number of database read requests. 
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The application also utilizes the Judge0 API to retrieve the output of the code and exhibit it in a new column (stdout) on the Display Page.
 
-### `npm run build`
+Both the frontend and backend applications are hosted and publicly accessible.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Live Demo
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Frontend: [https://tuf-show-code-snippets.vercel.app/](https://tuf-show-code-snippets.vercel.app/)
+- Backend: [https://tuf-showcodesnippets.onrender.com/](https://tuf-showcodesnippets.onrender.com/)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## API Documentation
 
-### `npm run eject`
+- Judge0 API: [https://judge0.com/](https://judge0.com/), [https://rapidapi.com/judge0-official/api/judge0-ce](https://rapidapi.com/judge0-official/api/judge0-ce)
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Project Structure
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+The project is divided into two main parts: the frontend and the backend.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- The frontend is located in the root directory and can be run with `npm start`. By default, it runs on `localhost:3000`.
+- The backend is located in the `server/` directory and can be run with `npm start`. By default, it runs on `localhost:3001`.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Environment Variables
 
-## Learn More
+You need to set up the following environment variables in your `.env` file:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- `REACT_APP_API_URL`: The URL of your backend API. For local development, this will be `http://localhost:3001/api`.
+- `REACT_APP_X_RAPIDAPI_KEY`: Your Judge0 API key.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+In the `server/.env` file, you need to set up the following environment variables:
+
+- `DB_HOST`: The host of your MySQL database.
+- `DB_USER`: The user for your MySQL database.
+- `DB_PASSWORD`: The password for your MySQL database.
+- `DB_NAME`: The name of your MySQL database.
+- `X_RAPIDAPI_KEY`: Your Judge0 API key.
+
+## Getting Started
+
+To get a local copy up and running, follow these simple steps:
+
+1. Clone the repository
+2. Install NPM packages using `npm install`
+3. Start the server using `npm start`
