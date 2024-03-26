@@ -2,14 +2,12 @@ import express from 'express';
 import { pool } from '../config/dbconfig';
 import dotenv from 'dotenv';
 dotenv.config();
-console.log(process.env.X_RAPIDAPI_KEY);
+console.log("BackendUrl: ", process.env.REACT_APP_API_URL);
 
 const router = express.Router();
 import axios from 'axios';
 
 async function makeSubmission(code_language: string, source_code: string, stdin: string) {
-
-  // code_language = Buffer.from(code_language, 'base64').toString();
   let language_id: number = 0;
   if (code_language === 'C++') {
     language_id = 54;
@@ -39,22 +37,12 @@ async function makeSubmission(code_language: string, source_code: string, stdin:
       source_code: source_code,
       stdin: stdin
     }
-
-    // send base64_encoded message
-    // data: {
-    //   language_id: language_id,
-    //   source_code: Buffer.from(source_code).toString('base64'),
-    //   stdin: Buffer.from(stdin).toString('base64')
-    // }
   };
 
-  console.log('Making submission with options:', options)
-
   try {
+    console.log('Making submission with options:', options)
     const response = await axios.request(options);
-    console.log('Response Status:', response.status);
-    console.log('Response Data:', response.data);
-    return response.data.token;
+    return response;
   } catch (error) {
     console.error(error);
     return null;
@@ -63,24 +51,21 @@ async function makeSubmission(code_language: string, source_code: string, stdin:
 
 router.post('/submitCode', async (req: express.Request, res: express.Response) => {
   let { username, code_language, stdin, source_code } = req.body;
-  const submissionToken = await makeSubmission(code_language, source_code, stdin);
-
-  // convert code_language, stdin, source_code from base64 to string
-  // code_language = Buffer.from(code_language, 'base64').toString();
-  // stdin = Buffer.from(stdin, 'base64').toString();
-  // source_code = Buffer.from(source_code, 'base64').toString();
-
-  if (!submissionToken) {
+  const response = await makeSubmission(code_language, source_code, stdin);
+  
+  if (!response) {
     res.status(500).send('Error generating submission token');
     return;
   }
+
+  const submissionToken = response.data.token;
 
   try {
     const [rows, fields] = await pool.query(
       'INSERT INTO submissions (username, code_language, stdin, source_code, submissionToken) VALUES (?,?,?,?,?)',
       [username, code_language, stdin, source_code, submissionToken]
     );
-    res.json({ message: 'Submission successful' });
+    res.status(response.status).json({ submissionToken, message: 'Submission successful', submitted: {username: username, code_language: code_language, stdin: stdin, source_code: source_code} });
   } catch (error) {
     console.error('Error submitting code:', error);
     res.status(500).send('Server error');

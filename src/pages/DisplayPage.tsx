@@ -3,7 +3,6 @@ import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-
 function DisplayPage() {
   const [entries, setEntries] = useState([]);
   const [open, setOpen] = useState(false);
@@ -34,7 +33,7 @@ function DisplayPage() {
   }
 
   useEffect(() => {
-    console.log(process.env.REACT_APP_API_URL);
+    console.log("BackendUrl: ", process.env.REACT_APP_API_URL);
     axios.get(`${process.env.REACT_APP_API_URL}/entries/getentries`)
       .then(response => {
         if (Array.isArray(response.data)) {

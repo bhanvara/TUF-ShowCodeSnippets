@@ -20,22 +20,19 @@ export default function SubmissionForm() {
           "stdin": formData.stdin,
           "source_code": formData.sourceCode 
         };
-
-        // Data converted to base64
-        // const formDataForAPI = {
-        //     "username": formData.username,
-        //     "code_language": btoa(formData.preferredCodeLanguage),
-        //     "stdin": btoa(formData.stdin),
-        //     "source_code": btoa(formData.sourceCode)
-        // };
-
+        
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/submit/submitcode`, formDataForAPI);
-
-            // Handle response here
-            const data = response.data;
-            console.log(data);
-            console.log(formDataForAPI);
+            console.log(response.data);
+            if(response.status === 201) {
+                setFormData({
+                    username: '',
+                    preferredCodeLanguage: '',
+                    stdin: '',
+                    sourceCode: ''
+                });
+                alert(response.data.message);
+            }
         } catch (error) {
             console.error('Error:', error);
         }
