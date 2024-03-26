@@ -3,44 +3,18 @@ import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
+console.log("BackendUrl: ", process.env.REACT_APP_API_URL);
+
 function DisplayPage() {
   const [entries, setEntries] = useState([]);
   const [open, setOpen] = useState(false);
   const [selectedCode, setSelectedCode] = useState('');
-  const [outputs, setOutputs] = useState({});
-
-  async function getOutput(submissionToken: string) {
-    const options = {
-      method: 'GET',
-      url: `https://judge0-ce.p.rapidapi.com/submissions/${submissionToken}`,
-      params: {
-        base64_encoded: 'false',
-        fields: '*'
-      },
-      headers: {
-        'X-RapidAPI-Key': process.env.REACT_APP_X_RAPIDAPI_KEY,
-        'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
-      }
-    };
-    try {
-      const response = await axios.request(options);
-      setOutputs(prevOutputs => ({ ...prevOutputs, [submissionToken]: response.data.stdout }));
-    } catch (error) {
-      console.error(error);
-    }
-
-    // await new Promise(resolve => setTimeout(resolve, 1000));
-  }
 
   useEffect(() => {
-    console.log("BackendUrl: ", process.env.REACT_APP_API_URL);
     axios.get(`${process.env.REACT_APP_API_URL}/entries/getentries`)
       .then(async response => {
         if (Array.isArray(response.data)) {
           setEntries(response.data as never[]);
-          for (const entry of response.data) {
-            await getOutput(entry.submissionToken);
-          }
         } else {
           console.error('API response is not an array');
         }
@@ -76,7 +50,7 @@ function DisplayPage() {
             </tr>
           </thead>
           <tbody>
-            {Array.isArray(entries) && entries.map((entry: { id: string, username: string, code_language: string, stdin: string, submission_time: string, source_code: string, submissionToken: string }, index: number) => (
+            {Array.isArray(entries) && entries.map((entry: { id: string, username: string, code_language: string, stdin: string, submission_time: string, source_code: string, output: string }, index: number) => (
               <tr key={entry.id} className={index % 2 === 0 ? 'bg-gray-200' : ''}>
                 <td className="border px-4 py-2">{entry.id}</td>
                 <td className="border px-4 py-2">{entry.username}</td>
@@ -89,7 +63,7 @@ function DisplayPage() {
                     Show Full Code
                   </button>
                 </td>
-                <td className="border px-4 py-2">{String(outputs[entry.submissionToken as keyof typeof outputs])}</td>
+                <td className="border px-4 py-2">{entry.output}</td>
               </tr>
             ))}
           </tbody>
