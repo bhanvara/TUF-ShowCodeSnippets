@@ -1,5 +1,7 @@
 import express from 'express';
 import { pool } from '../config/dbconfig';
+import {createClient} from 'redis';
+
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -51,6 +53,11 @@ async function makeSubmission(code_language: string, source_code: string, stdin:
 router.post('/submitCode', async (req: express.Request, res: express.Response) => {
   let { username, code_language, stdin, source_code } = req.body;
   const response = await makeSubmission(code_language, source_code, stdin);
+
+  const client = await createClient({ url: 'rediss://red-co1bf6uct0pc73fm28jg:O1E9TQCAcvx1lJH4s01zAk1MaiapQmcZ@oregon-redis.render.com:6379' })
+  .on('error', (err) => {
+    console.error('Redis client error:', err);
+  }).connect();
   
   if (!response) {
     res.status(500).send('Error generating submission token');
@@ -64,6 +71,9 @@ router.post('/submitCode', async (req: express.Request, res: express.Response) =
       'INSERT INTO submissions (username, code_language, stdin, source_code, submissionToken) VALUES (?,?,?,?,?)',
       [username, code_language, stdin, source_code, submissionToken]
     );
+
+    client.del('entries');
+
     res.status(response.status).json({ submissionToken, message: 'Submission successful', submitted: {username: username, code_language: code_language, stdin: stdin, source_code: source_code} });
   } catch (error) {
     console.error('Error submitting code:', error);
