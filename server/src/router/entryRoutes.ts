@@ -26,7 +26,7 @@ router.get('/getEntries', async (req: express.Request, res: express.Response) =>
       } else {
         console.log('Fetching entries from database');
         return pool.query('SELECT * FROM submissions').then(([rows, fields]) => {
-          client.setEx(redisKey, 3600, JSON.stringify(rows)); // Cache for 1 hour
+          client.set(redisKey, JSON.stringify(rows)); // Cache indefinitely
           return res.json(rows);
         }).catch((error) => {
           console.error('Error getting entries:', error);
