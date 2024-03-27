@@ -37,37 +37,39 @@ function DisplayPage() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <div className="flex-grow container mx-auto p-4">
-        <table className="table-auto w-full">
-          <thead>
-            <tr>
-              <th className="px-4 py-2">ID</th>
-              <th className="px-4 py-2">Username</th>
-              <th className="px-4 py-2">Code Language</th>
-              <th className="px-4 py-2">Stdin</th>
-              <th className="px-4 py-2">Submission Time</th>
-              <th className="px-4 py-2">Source Code</th>
-              <th className="px-4 py-2">Output</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Array.isArray(entries) && entries.map((entry: { id: string, username: string, code_language: string, stdin: string, submission_time: string, source_code: string, output: string }, index: number) => (
-              <tr key={entry.id} className={index % 2 === 0 ? 'bg-gray-200' : ''}>
-                <td className="border px-4 py-2">{entry.id}</td>
-                <td className="border px-4 py-2">{entry.username}</td>
-                <td className="border px-4 py-2">{entry.code_language}</td>
-                <td className="border px-4 py-2">{entry.stdin}</td>
-                <td className="border px-4 py-2">{new Date(entry.submission_time).toLocaleString()}</td>
-                <td className="border px-4 py-2 flex justify-between">
-                  <span>{entry.source_code.substring(0, 100)}</span>
-                  <button onClick={() => handleOpen(entry.source_code)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2">
-                    Show Full Code
-                  </button>
-                </td>
-                <td className="border px-4 py-2">{entry.output}</td>
+        <div className="overflow-x-auto">
+          <table className="table-auto w-full">
+            <thead>
+              <tr>
+                <th className="px-4 py-2">ID</th>
+                <th className="px-4 py-2">Username</th>
+                <th className="px-4 py-2">Code Language</th>
+                <th className="px-4 py-2">Stdin</th>
+                <th className="px-4 py-2">Submission Time</th>
+                <th className="px-4 py-2">Source Code</th>
+                <th className="px-4 py-2">Output</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {Array.isArray(entries) && entries.map((entry: { id: string, username: string, code_language: string, stdin: string, submission_time: string, source_code: string, output: string }, index: number) => (
+                <tr key={entry.id} className={index % 2 === 0 ? 'bg-gray-200' : ''}>
+                  <td className="border px-4 py-2">{entry.id}</td>
+                  <td className="border px-4 py-2">{entry.username}</td>
+                  <td className="border px-4 py-2">{entry.code_language}</td>
+                  <td className="border px-4 py-2">{entry.stdin}</td>
+                  <td className="border px-4 py-2">{new Date(entry.submission_time).toLocaleString()}</td>
+                  <td className="border px-4 py-2 flex justify-between">
+                    <span>{entry.source_code.substring(0, 100)}</span>
+                    <button onClick={() => handleOpen(entry.source_code)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2">
+                      Show Full Code
+                    </button>
+                  </td>
+                  <td className="border px-4 py-2">{entry.output}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         {open && (
           <div className="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import axios from 'axios';
+import { delay } from 'q';
 console.log("BackendUrl: ", process.env.REACT_APP_API_URL);
 
 export default function SubmissionForm() {
@@ -11,31 +12,36 @@ export default function SubmissionForm() {
         stdin: '',
         sourceCode: '',
     });
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setLoading(true);
 
         const formDataForAPI = {
-          "username": formData.username,
-          "code_language": formData.preferredCodeLanguage,
-          "stdin": formData.stdin,
-          "source_code": formData.sourceCode 
+            "username": formData.username,
+            "code_language": formData.preferredCodeLanguage,
+            "stdin": formData.stdin,
+            "source_code": formData.sourceCode
         };
 
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/submit/submitcode`, formDataForAPI);
             console.log(response.data);
-            if(response.status === 201) {
+            if (response.status === 201) {
                 setFormData({
                     username: '',
                     preferredCodeLanguage: '',
                     stdin: '',
                     sourceCode: ''
                 });
+                setLoading(false);
                 alert(response.data.message);
             }
         } catch (error) {
+            setLoading(false);
             console.error('Error:', error);
+            alert('Error occurred while submitting the code.');
         }
     };
 
@@ -110,18 +116,22 @@ export default function SubmissionForm() {
                                 onChange={handleChange}
                             ></textarea>
                         </div>
-                        <div className="flex items-center justify-between">
-                            <button
+                        <div className="flex items-center">
+                            <button disabled={loading}
                                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                                 type="submit"
                             >
                                 Submit
                             </button>
+                            {loading && <div className="flex items-center justify-center pl-2">
+                                <svg className="spinner" viewBox="0 0 50 50">
+                                    <circle className="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                                </svg>
+                            </div>}
                         </div>
                     </form>
                 </div>
             </div>
-
             <Footer />
         </div>
     );
