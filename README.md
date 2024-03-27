@@ -4,7 +4,7 @@ This project is a web application that facilitates the submission and display of
 
 ## Tech Stack
 - Backend: Express
-- Frontend: React (or Next.js or any other similar framework)
+- Frontend: React
 - Database: MySQL (hosted on Amazon RDS)
 - Caching: Redis
 
